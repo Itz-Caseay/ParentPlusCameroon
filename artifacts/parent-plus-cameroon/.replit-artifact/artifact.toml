@@ -1,0 +1,24 @@
+kind = "mobile"
+previewPath = "/"
+title = "Parent+ Cameroon"
+description = "An Android-first positive-parenting companion for parents and caregivers in Cameroon, with bilingual micro-learning, personalized guidance, reminders, feedback, and low-connectivity-friendly content."
+version = "1.0.0"
+id = "artifacts/parent-plus-cameroon"
+router = "expo-domain"
+
+[[services]]
+name = "expo"
+ensurePreviewReachable = "/status"
+paths = [ "/" ]
+localPort = 19012
+
+[services.development]
+run = "pnpm --filter @workspace/parent-plus-cameroon run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/parent-plus-cameroon", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/parent-plus-cameroon", "run", "serve" ]
+
+[services.env]
+PORT = "19012"
+BASE_PATH = "/"
