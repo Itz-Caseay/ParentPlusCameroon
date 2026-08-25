@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 export type Language = 'EN' | 'FR';
+export type ThemePreference = 'system' | 'light' | 'dark';
+export type ParentProfile = { name: string; imageUri: string | null; singleParent: boolean; language: Language; theme: ThemePreference };
 
 type ParentContextValue = {
   language: Language;
@@ -9,6 +11,10 @@ type ParentContextValue = {
   completed: string[];
   toggleCompleted: (id: string) => void;
   childAge: string;
+  theme: ThemePreference;
+  parentProfile: ParentProfile | null;
+  setTheme: (theme: ThemePreference) => void;
+  saveParentProfile: (profile: ParentProfile) => void;
   setChildAge: (age: string) => void;
 };
 
@@ -18,15 +24,21 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('EN');
   const [completed, setCompleted] = useState<string[]>(['listen-first']);
   const [childAge, setChildAgeState] = useState('3–5 years');
+  const [theme, setThemeState] = useState<ThemePreference>('system');
+  const [parentProfile, setParentProfile] = useState<ParentProfile | null>(null);
 
   useEffect(() => {
-    AsyncStorage.multiGet(['parent-language', 'parent-completed', 'parent-age']).then((values) => {
+    AsyncStorage.multiGet(['parent-language', 'parent-completed', 'parent-age', 'parent-theme', 'parent-profile']).then((values) => {
       const storedLanguage = values[0][1];
       const storedCompleted = values[1][1];
       const storedAge = values[2][1];
+      const storedTheme = values[3][1];
+      const storedProfile = values[4][1];
       if (storedLanguage === 'EN' || storedLanguage === 'FR') setLanguageState(storedLanguage);
       if (storedCompleted) setCompleted(JSON.parse(storedCompleted) as string[]);
       if (storedAge) setChildAgeState(storedAge);
+      if (storedTheme === 'system' || storedTheme === 'light' || storedTheme === 'dark') setThemeState(storedTheme);
+      if (storedProfile) setParentProfile(JSON.parse(storedProfile) as ParentProfile);
     });
   }, []);
 
@@ -37,6 +49,10 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
       void AsyncStorage.setItem('parent-language', next);
     },
     completed,
+    theme,
+    parentProfile,
+    setTheme: (next: ThemePreference) => { setThemeState(next); void AsyncStorage.setItem('parent-theme', next); },
+    saveParentProfile: (profile: ParentProfile) => { setParentProfile(profile); void AsyncStorage.setItem('parent-profile', JSON.stringify(profile)); },
     toggleCompleted: (id: string) => {
       setCompleted((current) => {
         const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
@@ -49,7 +65,7 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
       setChildAgeState(age);
       void AsyncStorage.setItem('parent-age', age);
     },
-  }), [language, completed, childAge]);
+  }), [language, completed, childAge, theme, parentProfile]);
 
   return <ParentContext.Provider value={value}>{children}</ParentContext.Provider>;
 }
