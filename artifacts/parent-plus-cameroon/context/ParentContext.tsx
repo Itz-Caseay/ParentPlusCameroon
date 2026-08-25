@@ -25,7 +25,7 @@ type ParentContextValue = {
 
 const ParentContext = createContext<ParentContextValue | null>(null);
 
-export function ParentProvider({ children }: { children: React.ReactNode }) {
+export function ParentProvider({ children: content }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('EN');
   const [completed, setCompleted] = useState<string[]>(['listen-first']);
   const [childAge, setChildAgeState] = useState('3–5 years');
@@ -81,7 +81,7 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
     },
   }), [language, completed, childAge, theme, parentProfile, children, ppcPoints]);
 
-  return <ParentContext.Provider value={value}>{children}</ParentContext.Provider>;
+  return <ParentContext.Provider value={value}>{content}</ParentContext.Provider>;
 }
 
 export function useParent() {
