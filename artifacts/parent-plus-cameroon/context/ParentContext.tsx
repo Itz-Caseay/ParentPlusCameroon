@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 
 export type Language = 'EN' | 'FR';
 export type ThemePreference = 'system' | 'light' | 'dark';
+export type ChildProfile = { name: string; age: string; sex: string; educationLevel: string };
 export type ParentProfile = { name: string; imageUri: string | null; singleParent: boolean; language: Language; theme: ThemePreference };
 
 type ParentContextValue = {
@@ -15,6 +16,8 @@ type ParentContextValue = {
   parentProfile: ParentProfile | null;
   setTheme: (theme: ThemePreference) => void;
   saveParentProfile: (profile: ParentProfile) => void;
+  children: ChildProfile[];
+  saveChildren: (children: ChildProfile[]) => void;
   setChildAge: (age: string) => void;
 };
 
@@ -26,9 +29,10 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
   const [childAge, setChildAgeState] = useState('3–5 years');
   const [theme, setThemeState] = useState<ThemePreference>('system');
   const [parentProfile, setParentProfile] = useState<ParentProfile | null>(null);
+  const [children, setChildren] = useState<ChildProfile[]>([]);
 
   useEffect(() => {
-    AsyncStorage.multiGet(['parent-language', 'parent-completed', 'parent-age', 'parent-theme', 'parent-profile']).then((values) => {
+    AsyncStorage.multiGet(['parent-language', 'parent-completed', 'parent-age', 'parent-theme', 'parent-profile', 'parent-children']).then((values) => {
       const storedLanguage = values[0][1];
       const storedCompleted = values[1][1];
       const storedAge = values[2][1];
@@ -39,6 +43,7 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
       if (storedAge) setChildAgeState(storedAge);
       if (storedTheme === 'system' || storedTheme === 'light' || storedTheme === 'dark') setThemeState(storedTheme);
       if (storedProfile) setParentProfile(JSON.parse(storedProfile) as ParentProfile);
+      if (values[5][1]) setChildren(JSON.parse(values[5][1]) as ChildProfile[]);
     });
   }, []);
 
@@ -51,6 +56,8 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
     completed,
     theme,
     parentProfile,
+    children,
+    saveChildren: (next: ChildProfile[]) => { setChildren(next); void AsyncStorage.setItem('parent-children', JSON.stringify(next)); },
     setTheme: (next: ThemePreference) => { setThemeState(next); void AsyncStorage.setItem('parent-theme', next); },
     saveParentProfile: (profile: ParentProfile) => { setParentProfile(profile); void AsyncStorage.setItem('parent-profile', JSON.stringify(profile)); },
     toggleCompleted: (id: string) => {
@@ -65,7 +72,7 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
       setChildAgeState(age);
       void AsyncStorage.setItem('parent-age', age);
     },
-  }), [language, completed, childAge, theme, parentProfile]);
+  }), [language, completed, childAge, theme, parentProfile, children]);
 
   return <ParentContext.Provider value={value}>{children}</ParentContext.Provider>;
 }
