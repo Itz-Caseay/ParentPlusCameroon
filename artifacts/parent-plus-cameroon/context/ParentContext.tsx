@@ -17,6 +17,8 @@ type ParentContextValue = {
   setTheme: (theme: ThemePreference) => void;
   saveParentProfile: (profile: ParentProfile) => void;
   children: ChildProfile[];
+  ppcPoints: number;
+  awardProgress: (points: number) => void;
   saveChildren: (children: ChildProfile[]) => void;
   setChildAge: (age: string) => void;
 };
@@ -30,9 +32,10 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemePreference>('system');
   const [parentProfile, setParentProfile] = useState<ParentProfile | null>(null);
   const [children, setChildren] = useState<ChildProfile[]>([]);
+  const [ppcPoints, setPpcPoints] = useState(0);
 
   useEffect(() => {
-    AsyncStorage.multiGet(['parent-language', 'parent-completed', 'parent-age', 'parent-theme', 'parent-profile', 'parent-children']).then((values) => {
+    AsyncStorage.multiGet(['parent-language', 'parent-completed', 'parent-age', 'parent-theme', 'parent-profile', 'parent-children', 'ppc-points']).then((values) => {
       const storedLanguage = values[0][1];
       const storedCompleted = values[1][1];
       const storedAge = values[2][1];
@@ -44,6 +47,7 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
       if (storedTheme === 'system' || storedTheme === 'light' || storedTheme === 'dark') setThemeState(storedTheme);
       if (storedProfile) setParentProfile(JSON.parse(storedProfile) as ParentProfile);
       if (values[5][1]) setChildren(JSON.parse(values[5][1]) as ChildProfile[]);
+      if (values[6][1]) setPpcPoints(Number(values[6][1]) || 0);
     });
   }, []);
 
@@ -57,6 +61,8 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
     theme,
     parentProfile,
     children,
+    ppcPoints,
+    awardProgress: (points: number) => { setPpcPoints((current) => { const next = current + points; void AsyncStorage.setItem('ppc-points', String(next)); return next; }); },
     saveChildren: (next: ChildProfile[]) => { setChildren(next); void AsyncStorage.setItem('parent-children', JSON.stringify(next)); },
     setTheme: (next: ThemePreference) => { setThemeState(next); void AsyncStorage.setItem('parent-theme', next); },
     saveParentProfile: (profile: ParentProfile) => { setParentProfile(profile); void AsyncStorage.setItem('parent-profile', JSON.stringify(profile)); },
@@ -64,6 +70,7 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
       setCompleted((current) => {
         const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
         void AsyncStorage.setItem('parent-completed', JSON.stringify(next));
+        if (!current.includes(id) && next.length >= 15 && current.length < 15) { setPpcPoints((points) => { const awarded = points + 5; void AsyncStorage.setItem('ppc-points', String(awarded)); return awarded; }); }
         return next;
       });
     },
@@ -72,7 +79,7 @@ export function ParentProvider({ children }: { children: React.ReactNode }) {
       setChildAgeState(age);
       void AsyncStorage.setItem('parent-age', age);
     },
-  }), [language, completed, childAge, theme, parentProfile, children]);
+  }), [language, completed, childAge, theme, parentProfile, children, ppcPoints]);
 
   return <ParentContext.Provider value={value}>{children}</ParentContext.Provider>;
 }
