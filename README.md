@@ -24,33 +24,33 @@ Theme selection is available during parent onboarding: System, Light, or Dark.
 From the repository root:
 
 
-a\`\`\`bash
+```bash
 pnpm install
 pnpm --filter @workspace/parent-plus-cameroon dev
 
-a\`\`\`
+a```
 
-The mobile app is in \`artifacts/parent-plus-cameroon\`. Set the Clerk and Expo variables used by the app before running it, especially \`EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY\` and \`EXPO_PUBLIC_DOMAIN\`.
+The mobile app is in `artifacts/parent-plus-cameroon`. Set the Clerk and Expo variables used by the app before running it, especially `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` and `EXPO_PUBLIC_DOMAIN`.
 
 ## Export an Android APK with EAS
 
 1. Install the Expo application services CLI and authenticate:
 
-   \`\`\`bash
+   ```bash
    npm install --global eas-cli
    eas login
-   \`\`\`
+   ```
 
 2. Move into the mobile artifact and configure EAS once:
 
-   \`\`\`bash
+   ```bash
    cd artifacts/parent-plus-cameroon
    eas build:configure
-   \`\`\`
+   ```
 
-3. Add an APK profile to \`eas.json\` (merge this with any existing profiles):
+3. Add an APK profile to `eas.json` (merge this with any existing profiles):
 
-   \`\`\`json
+   ```json
    {
      "build": {
        "preview": {
@@ -62,35 +62,35 @@ The mobile app is in \`artifacts/parent-plus-cameroon\`. Set the Clerk and Expo 
        }
      }
    }
-   \`\`\`
+   ```
 
 4. Build the installable APK:
 
-   \`\`\`bash
+   ```bash
    eas build --platform android --profile preview
-   \`\`\`
+   ```
 
-5. When the build completes, open the Expo build URL printed by EAS and download the \`.apk\` file. Install it on an Android device with:
+5. When the build completes, open the Expo build URL printed by EAS and download the `.apk` file. Install it on an Android device with:
 
-   \`\`\`bash
+   ```bash
    adb install path/to/parent-plus-cameroon.apk
-   \`\`\`
+   ```
 
 For Google Play, use the production profile to create an Android App Bundle instead:
 
-\`\`\`bash
+```bash
 eas build --platform android --profile production
-\`\`\`
+```
 
 ## Local release build (optional)
 
 If you prefer to build locally and have Android Studio/SDK configured:
 
-\`\`\`bash
+```bash
 cd artifacts/parent-plus-cameroon
 npx expo prebuild --platform android
 cd android
 ./gradlew assembleRelease
-\`\`\`
+```
 
-The generated release APK is normally at \`android/app/build/outputs/apk/release/app-release.apk\`.
+The generated release APK is normally at `android/app/build/outputs/apk/release/app-release.apk`.
