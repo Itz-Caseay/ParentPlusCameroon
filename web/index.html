@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parent+ Cameroon</title>
+  <meta name="description" content="Parent+ Cameroon - Digital Positive Parenting Support Platform">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Parent+ Cameroon home">
+      <span class="brand-mark"><img src="assets/logo.png" alt="Parent+ Cameroon logo"></span>
+      <span><strong>Parent+</strong><small>Cameroon</small></span>
+    </a>
+    <nav>
+      <button type="button" data-view="home" data-i18n="navHome"><span class="iconic" data-icon="house"></span><span class="nav-label">Home</span></button>
+      <button type="button" data-view="academy" data-i18n="navAcademy"><span class="iconic" data-icon="library-big"></span><span class="nav-label">Academy</span></button>
+      <button type="button" data-view="support" data-i18n="navSupport"><span class="iconic" data-icon="heart-plus"></span><span class="nav-label">Support</span></button>
+      <button type="button" data-view="community" data-i18n="navCommunity"><span class="iconic" data-icon="newspaper"></span><span class="nav-label">Community</span></button>
+    </nav>
+    <div class="top-actions">
+      <button id="langBtn" class="ghost" aria-label="Toggle language">FR</button>
+      <button id="themeBtn" type="button" class="ghost" aria-label="Toggle dark mode"><span class="iconic" data-icon="theme"></span></button>
+      <button id="notifBtn" type="button" class="notif-bell" aria-label="Notifications"><span class="iconic" data-icon="bell"></span><span id="notifBadge" class="notif-badge">0</span></button>
+      <button id="loginBtn" class="primary small">Get Started</button>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <footer id="siteFooter">
+    <div><strong>Parent+ Cameroon</strong><br><span id="footerTagline" data-i18n="footerTagline">Empowering Parents. Strengthening Families. Building Better Futures.</span></div>
+    <div class="footer-links">
+      <span data-i18n="lowData">Low-data friendly</span>
+      <span data-i18n="langs">English / French</span>
+      <span data-i18n="privacy">Privacy & Safeguarding</span>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>

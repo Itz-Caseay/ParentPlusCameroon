@@ -1,0 +1,13 @@
+{
+  "name": "parent-plus-cameroon-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Parent+ Cameroon prototype with a mobile-first frontend and Express API scaffold.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
