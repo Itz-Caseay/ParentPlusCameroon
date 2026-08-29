@@ -323,8 +323,12 @@ h3 {
   display: grid;
   place-items: center;
   background: var(--green-soft);
+  color: var(--green);
   font-size: 22px;
   margin-bottom: 15px;
+}
+.icon svg {
+  display: block;
 }
 .card p {
   color: var(--muted-foreground);
@@ -368,7 +372,17 @@ h3 {
   gap: 10px;
 }
 .course .course-icon {
-  font-size: 32px;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: var(--green-soft);
+  color: var(--green);
+  flex-shrink: 0;
+}
+.course .course-icon svg {
+  display: block;
 }
 .course button {
   margin-top: 18px;
@@ -449,6 +463,10 @@ h3 {
   background: var(--green-soft);
   color: var(--green);
   font-weight: 900;
+  flex-shrink: 0;
+}
+.check svg {
+  display: block;
 }
 
 .form-card {
@@ -641,6 +659,10 @@ textarea:focus {
   display: grid;
   place-items: center;
   font-weight: 900;
+  flex-shrink: 0;
+}
+.avatar svg {
+  display: block;
 }
 .post-head {
   display: flex;
@@ -740,18 +762,18 @@ footer {
     order: 3;
     width: 100%;
     overflow: auto;
-    justify-content: space-evenly;
-    gap: 0;
+    justify-content: center;
+    gap: 6px;
   }
   .topbar nav button {
     white-space: nowrap;
     font-size: 12px;
-    padding: 8px 8px;
+    padding: 8px 14px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 2px;
-    flex: 1;
+    flex: 0 1 auto;
   }
   .topbar nav button .nav-label {
     display: none;
@@ -1160,7 +1182,19 @@ a {
 .notification-card:hover { border-color: var(--green); }
 .notification-card.unread { border-left: 3px solid var(--green); background: var(--green-soft); }
 .notification-card.read { opacity: 0.7; }
-.notif-icon { font-size: 24px; flex-shrink: 0; }
+.notif-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--green-soft);
+  color: var(--green);
+  flex-shrink: 0;
+}
+.notif-icon svg {
+  display: block;
+}
 .notif-content { flex: 1; }
 .notif-content strong { display: block; margin-bottom: 4px; }
 .notif-content p { color: var(--muted-foreground); font-size: 14px; margin: 0; }
@@ -1190,7 +1224,52 @@ a {
 .badge-card.locked { opacity: 0.5; }
 .badge-icon { font-size: 32px; }
 .badge-lock { font-size: 11px; color: var(--muted-foreground); font-weight: 700; }
-.profile-stars { font-size: 24px; margin: 12px 0; }
+.profile-stars {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 12px 0;
+  color: var(--yellow, #E8A33D);
+}
+.profile-stars svg {
+  display: block;
+}
+.onboarding-thanks-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--green-soft);
+  color: var(--green);
+  margin: 0 auto 16px;
+}
+.onboarding-thanks-icon svg {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+.inline-icon {
+  display: inline-grid;
+  place-items: center;
+  vertical-align: -6px;
+}
+.inline-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+.lesson-title-icon {
+  display: inline-grid;
+  place-items: center;
+  vertical-align: -8px;
+  color: var(--green);
+}
+.lesson-title-icon svg {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
 
 /* Community Tabs */
 .community-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--line); padding-bottom: 0; flex-wrap: wrap; }
@@ -1201,7 +1280,21 @@ a {
 /* Situation Cards (Support) */
 .situation-card { cursor: pointer; transition: 0.2s; text-align: center; }
 .situation-card:hover { border-color: var(--green); transform: translateY(-2px); }
-.situation-icon { font-size: 40px; margin-bottom: 10px; }
+.situation-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: var(--green-soft);
+  color: var(--green);
+  margin: 0 auto 10px;
+}
+.situation-icon svg {
+  display: block;
+  width: 26px;
+  height: 26px;
+}
 
 /* Settings */
 .settings-section { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
