@@ -274,6 +274,7 @@ h3 {
   max-width: 60%;
   max-height: 80%;
   object-fit: contain;
+  border-radius: 22px;
 }
 .mini-stat {
   display: flex;
@@ -532,9 +533,21 @@ textarea:focus {
   flex-shrink: 0;
 }
 .onboarding-option-icon {
-  font-size: 20px;
-  line-height: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
+  background: var(--green-soft);
+  color: var(--green);
+}
+.onboarding-option-icon svg {
+  display: block;
+}
+.onboarding-option.active .onboarding-option-icon {
+  background: var(--primary);
+  color: #fff;
 }
 .onboarding-option-text {
   display: flex;
@@ -727,13 +740,18 @@ footer {
     order: 3;
     width: 100%;
     overflow: auto;
+    justify-content: space-evenly;
+    gap: 0;
   }
   .topbar nav button {
     white-space: nowrap;
     font-size: 12px;
     padding: 8px 8px;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 2px;
+    flex: 1;
   }
   .topbar nav button .nav-label {
     display: none;

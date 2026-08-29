@@ -633,15 +633,22 @@ const situations = [
 ];
 
 const onboardingGoals = [
-  { id: "communication", icon: "💬", titleKey: "onboardingOptionCommunication", descKey: "onboardingOptionCommunicationDesc" },
-  { id: "education", icon: "📚", titleKey: "onboardingOptionEducation", descKey: "onboardingOptionEducationDesc" },
-  { id: "discipline", icon: "🧭", titleKey: "onboardingOptionDiscipline", descKey: "onboardingOptionDisciplineDesc" },
-  { id: "emotions", icon: "💚", titleKey: "onboardingOptionEmotions", descKey: "onboardingOptionEmotionsDesc" },
-  { id: "behavior", icon: "😡", titleKey: "onboardingOptionBehavior", descKey: "onboardingOptionBehaviorDesc" },
-  { id: "confidence", icon: "🌟", titleKey: "onboardingOptionConfidence", descKey: "onboardingOptionConfidenceDesc" },
-  { id: "screentime", icon: "📱", titleKey: "onboardingOptionScreenTime", descKey: "onboardingOptionScreenTimeDesc" },
-  { id: "health", icon: "🌿", titleKey: "onboardingOptionHealth", descKey: "onboardingOptionHealthDesc" }
+  { id: "communication", icon: "message-circle", titleKey: "onboardingOptionCommunication", descKey: "onboardingOptionCommunicationDesc" },
+  { id: "education", icon: "book-open", titleKey: "onboardingOptionEducation", descKey: "onboardingOptionEducationDesc" },
+  { id: "discipline", icon: "compass", titleKey: "onboardingOptionDiscipline", descKey: "onboardingOptionDisciplineDesc" },
+  { id: "emotions", icon: "heart", titleKey: "onboardingOptionEmotions", descKey: "onboardingOptionEmotionsDesc" },
+  { id: "behavior", icon: "wind", titleKey: "onboardingOptionBehavior", descKey: "onboardingOptionBehaviorDesc" },
+  { id: "confidence", icon: "star", titleKey: "onboardingOptionConfidence", descKey: "onboardingOptionConfidenceDesc" }
 ];
+const onboardingIconSvgs = {
+  "message-circle": '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>',
+  "book-open": '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg>',
+  "compass": '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/></svg>',
+  "heart": '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>',
+  "wind": '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 19.6A2 2 0 1 0 14 16H2"/><path d="M17.5 8a2.5 2.5 0 1 1 2 4H2"/><path d="M9.8 4.4A2 2 0 1 1 11 8H2"/></svg>',
+  "star": '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>',
+  "pencil": '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>'
+};
 
 const state = {
   user: JSON.parse(localStorage.getItem("parentPlusUser") || "null"),
@@ -954,7 +961,7 @@ function onboarding(){
   onboardingSelected=state.user.onboardingGoals?[...state.user.onboardingGoals]:[];
   const otherChecked=onboardingSelected.includes("other");
   const otherValue=state.user.onboardingOther||"";
-  return `<section class="section"><div class="form-card card onboarding-card" style="max-width:640px"><span class="eyebrow">${t("onboardingEyebrow")}</span><h2>${t("onboardingTitle")}</h2><p class="muted">${t("onboardingMuted")}</p><form onsubmit="doOnboarding(event)"><div class="onboarding-options">${onboardingGoals.map(g=>`<label class="onboarding-option${onboardingSelected.includes(g.id)?" active":""}"><input type="checkbox" name="onboardingGoal" value="${g.id}" ${onboardingSelected.includes(g.id)?"checked":""} onchange="toggleOnboardingOption(this)"><span class="onboarding-option-icon">${g.icon}</span><span class="onboarding-option-text"><strong>${t(g.titleKey)}</strong><span class="muted">${t(g.descKey)}</span></span></label>`).join("")}<label class="onboarding-option${otherChecked?" active":""}"><input type="checkbox" name="onboardingGoal" value="other" ${otherChecked?"checked":""} onchange="toggleOnboardingOption(this)"><span class="onboarding-option-icon">✏️</span><span class="onboarding-option-text"><strong>${t("onboardingOptionOther")}</strong></span></label></div><div id="onboardingOtherWrap" style="display:${otherChecked?"block":"none"};margin-top:10px"><textarea id="onboardingOtherInput" rows="3" placeholder="${t("onboardingOtherPlaceholder")}">${escapeHtml(otherValue)}</textarea></div><div class="form-actions" style="margin-top:20px"><button type="button" class="secondary" onclick="skipOnboarding()">${t("onboardingSkip")}</button><button class="primary" type="submit">${t("onboardingSubmit")}</button></div></form></div></section>`;
+  return `<section class="section"><div class="form-card card onboarding-card" style="max-width:640px"><h2>${t("onboardingTitle")}</h2><p class="muted">${t("onboardingMuted")}</p><form onsubmit="doOnboarding(event)"><div class="onboarding-options">${onboardingGoals.map(g=>`<label class="onboarding-option${onboardingSelected.includes(g.id)?" active":""}"><input type="checkbox" name="onboardingGoal" value="${g.id}" ${onboardingSelected.includes(g.id)?"checked":""} onchange="toggleOnboardingOption(this)"><span class="onboarding-option-icon">${onboardingIconSvgs[g.icon]}</span><span class="onboarding-option-text"><strong>${t(g.titleKey)}</strong><span class="muted">${t(g.descKey)}</span></span></label>`).join("")}<label class="onboarding-option${otherChecked?" active":""}"><input type="checkbox" name="onboardingGoal" value="other" ${otherChecked?"checked":""} onchange="toggleOnboardingOption(this)"><span class="onboarding-option-icon">${onboardingIconSvgs["pencil"]}</span><span class="onboarding-option-text"><strong>${t("onboardingOptionOther")}</strong></span></label></div><div id="onboardingOtherWrap" style="display:${otherChecked?"block":"none"};margin-top:10px"><textarea id="onboardingOtherInput" rows="3" placeholder="${t("onboardingOtherPlaceholder")}">${escapeHtml(otherValue)}</textarea></div><div class="form-actions" style="margin-top:20px"><button type="button" class="secondary" onclick="skipOnboarding()">${t("onboardingSkip")}</button><button class="primary" type="submit">${t("onboardingSubmit")}</button></div></form></div></section>`;
 }
 function toggleOnboardingOption(input){
   const label=input.closest(".onboarding-option");
@@ -986,8 +993,8 @@ function skipOnboarding(){
 }
 function onboardingThanks(){
   if(!state.user)return go("signup");
-  setTimeout(()=>{ if((location.hash.replace("#","")||"")==="onboarding-thanks") go("dashboard"); },2200);
-  return `<section class="section"><div class="form-card card" style="text-align:center;max-width:520px"><div style="font-size:48px;margin-bottom:16px">💚</div><h2>${t("onboardingThanksTitle")}</h2><p class="muted">${t("onboardingThanksMsg")}</p><button class="primary" onclick="go('dashboard')" style="margin-top:20px">${t("continue")}</button></div></section>`;
+  setTimeout(()=>{ if((location.hash.replace("#","")||"")==="onboarding-thanks") go("dashboard"); },3000);
+  return `<section class="section"><div class="form-card card" style="text-align:center;max-width:520px"><div style="font-size:48px;margin-bottom:16px">💚</div><h2>${t("onboardingThanksTitle")}</h2><p class="muted">${t("onboardingThanksMsg")}</p></div></section>`;
 }
 
 function login(){
