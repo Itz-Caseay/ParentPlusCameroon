@@ -44,7 +44,8 @@ function ageGroup(age: string) {
   const value = Number.parseInt(age, 10);
   if (value <= 5) return "early years";
   if (value <= 9) return "primary years";
-  return "pre-teen years";
+  if (value <= 14) return "pre-teen years";
+  return "teen years";
 }
 function personalizedGuide(child: ChildProfile, points: number) {
   const group = ageGroup(child.age);
@@ -53,7 +54,9 @@ function personalizedGuide(child: ChildProfile, points: number) {
       ? "Keep routines short, warm, and predictable."
       : group === "primary years"
         ? "Give your child room to practise independence while staying close."
-        : "Respect growing independence and keep the door open for honest conversations.";
+        : group === "pre-teen years"
+          ? "Respect growing independence and keep the door open for honest conversations."
+          : "Support their growing autonomy with clear boundaries, respect, and open dialogue.";
   const focus =
     child.educationLevel === "Nursery"
       ? "Use play, pictures, and one-step instructions."
@@ -211,14 +214,14 @@ export default function SupportScreen() {
           onPress={() => {
             if (callTopic.trim()) setCallRequested(true);
           }}
-          style={[styles.action, { backgroundColor: colors.foreground }]}
+          style={[styles.action, { backgroundColor: colors.accent }]}
         >
           <Feather
             name={callRequested ? "check" : "video"}
             size={17}
-            color="#fff"
+            color={colors.primary}
           />
-          <Text style={styles.actionText}>
+          <Text style={[styles.actionText, { color: colors.primary }]}>
             {callRequested ? copy.sent : copy.request}
           </Text>
         </Pressable>

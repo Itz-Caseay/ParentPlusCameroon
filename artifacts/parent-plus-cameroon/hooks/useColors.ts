@@ -2,6 +2,8 @@ import { useColorScheme } from 'react-native';
 import colors from '@/constants/colors';
 import { useParent } from '@/context/ParentContext';
 
+type Palette = typeof colors.light;
+
 /**
  * Returns the design tokens for the current color scheme.
  *
@@ -18,9 +20,8 @@ export function useColors() {
   const systemScheme = useColorScheme();
   const { theme } = useParent();
   const scheme = theme === 'system' ? systemScheme : theme;
-  const palette =
-    scheme === 'dark' && 'dark' in colors
-      ? (colors as Record<string, typeof colors.light>).dark
-      : colors.light;
+  const palette: Palette =
+    scheme === 'dark' && 'dark' in colors ? colors.dark : colors.light;
+
   return { ...palette, radius: colors.radius };
 }
