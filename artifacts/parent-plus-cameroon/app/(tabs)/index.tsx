@@ -5,6 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { useParent } from "@/context/ParentContext";
+import { useUser } from "@clerk/expo";
 
 const copy = {
   EN: {
@@ -37,8 +38,10 @@ export default function HomeScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { language, completed, childAge, children } = useParent();
+  const { user } = useUser();
   const t = copy[language];
   const progress = Math.min(completed.length / 6, 1);
+  const profileInitial = (user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0] ?? "P").toUpperCase();
   return (
     <ScrollView
       style={{ backgroundColor: colors.background }}
@@ -58,7 +61,7 @@ export default function HomeScreen() {
           onPress={() => router.push("/profile")}
           style={[styles.avatar, { backgroundColor: colors.secondary }]}
         >
-          <Text style={[styles.avatarText, { color: colors.primary }]}>P</Text>
+          <Text style={[styles.avatarText, { color: colors.primary }]}>{profileInitial}</Text>
         </Pressable>
       </View>
       <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>

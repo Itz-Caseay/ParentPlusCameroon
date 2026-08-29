@@ -18,28 +18,37 @@ export default function ChildrenSetupScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { saveChildren } = useParent();
-  const [children, setChildren] = useState<Child[]>([]);
+  const { saveChildren, children: existingChildren } = useParent();
+  const [children, setChildren] = useState<Child[]>(existingChildren);
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [sex, setSex] = useState("");
   const [level, setLevel] = useState("");
   const [error, setError] = useState("");
+  const ageNumber = Number(age.trim());
+  const isAgeValid = age.trim() !== "" && Number.isInteger(ageNumber) && ageNumber >= 0 && ageNumber <= 18;
+  const isFormReady = !!name.trim() && !!age.trim() && !!sex && !!level && isAgeValid;
+
   const addChild = () => {
     if (!name.trim() || !age.trim() || !sex || !level) {
       setError("Complete every child detail before adding.");
       return;
     }
 
-    const ageNumber = Number(age.trim());
-    if (!Number.isInteger(ageNumber) || ageNumber < 0 || ageNumber > 18) {
+    const parsedAge = Number(age.trim());
+    if (!Number.isInteger(parsedAge) || parsedAge < 0) {
       setError("Age must be a whole number between 0 and 18 years.");
+      return;
+    }
+
+    if (parsedAge > 18) {
+      setError("This child is old enough to take certain decisions.");
       return;
     }
 
     setChildren((current) => [
       ...current,
-      { name: name.trim(), age: `${ageNumber} years`, sex, educationLevel: level },
+      { name: name.trim(), age: `${parsedAge} years`, sex, educationLevel: level },
     ]);
     setName("");
     setAge("");
@@ -48,12 +57,16 @@ export default function ChildrenSetupScreen() {
     setError("");
   };
   const finish = () => {
-    if (!children.length) {
+    const allChildren = [...existingChildren, ...children].filter(
+      (child, index, list) =>
+        index === list.findIndex((item) => item.name === child.name && item.age === child.age && item.sex === child.sex && item.educationLevel === child.educationLevel),
+    );
+    if (!allChildren.length) {
       setError("Add at least one child to continue.");
       return;
     }
-    saveChildren(children);
-    router.replace("/(tabs)");
+    saveChildren(allChildren);
+    router.replace("/objective");
   };
   const Choice = ({
     label,
@@ -197,10 +210,25 @@ export default function ChildrenSetupScreen() {
         </View>
         <Pressable
           onPress={addChild}
-          style={[styles.addButton, { borderColor: colors.primary }]}
+          style={[
+            styles.addButton,
+            {
+              borderColor: '#f4b39a',
+              backgroundColor: isFormReady ? '#f4b39a' : '#fff',
+            },
+          ]}
         >
-          <Feather name="plus" size={17} color={colors.primary} />
-          <Text style={[styles.addText, { color: colors.primary }]}>
+          <Feather
+            name="plus"
+            size={17}
+            color={isFormReady ? '#fff' : '#f4b39a'}
+          />
+          <Text
+            style={[
+              styles.addText,
+              { color: isFormReady ? '#fff' : '#f4b39a' },
+            ]}
+          >
             Add child
           </Text>
         </Pressable>

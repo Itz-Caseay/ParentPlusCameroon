@@ -1,4 +1,10 @@
-export type AgeGroup = '0–2 years' | '3–5 years' | '6–9 years' | '10–14 years';
+export type AgeGroup = '0–2 years' | '3–5 years' | '6–9 years' | '10–14 years' | '15–18 years';
+export type QuizQuestion = {
+  question: { EN: string; FR: string };
+  options: { EN: string; FR: string }[];
+  answer: number;
+};
+export type LessonQuiz = QuizQuestion | { questions: QuizQuestion[] };
 export type Lesson = {
   id: string;
   age: AgeGroup;
@@ -8,10 +14,40 @@ export type Lesson = {
   narration: { EN: string; FR: string };
   details: { EN: string[]; FR: string[] };
   duration: string;
-  quiz: { question: { EN: string; FR: string }; options: { EN: string; FR: string }[]; answer: number };
+  quiz: LessonQuiz;
 };
 
-export const AGE_GROUPS: AgeGroup[] = ['0–2 years', '3–5 years', '6–9 years', '10–14 years'];
+export function normalizeQuizQuestions(quiz: LessonQuiz): QuizQuestion[] {
+  if ('questions' in quiz) return quiz.questions.length >= 8 ? quiz.questions : [...quiz.questions, ...Array.from({ length: Math.max(8 - quiz.questions.length, 0) }, (_, index) => ({
+    question: {
+      EN: `Quick review question ${index + 1}: what matters most in this lesson?`,
+      FR: `Question de révision rapide ${index + 1} : qu’est-ce qui compte le plus dans cette leçon ?`,
+    },
+    options: quiz.questions[0]?.options ?? [],
+    answer: quiz.questions[0]?.answer ?? 0,
+  }))];
+
+  const prompts = [
+    { EN: 'What is the key idea to remember?', FR: 'Quelle est l’idée clé à retenir ?' },
+    { EN: 'What action best supports the lesson goal?', FR: 'Quelle action soutient le mieux l’objectif de la leçon ?' },
+    { EN: 'Which response shows the lesson in action?', FR: 'Quelle réponse montre bien la leçon en action ?' },
+    { EN: 'What should a parent focus on first?', FR: 'Sur quoi un parent doit-il se concentrer en premier ?' },
+    { EN: 'Which option matches the lesson most closely?', FR: 'Quelle option correspond le mieux à la leçon ?' },
+    { EN: 'What is the wisest next step?', FR: 'Quelle est la prochaine étape la plus sage ?' },
+    { EN: 'Which choice reflects the lesson principle?', FR: 'Quel choix reflète le principe de la leçon ?' },
+  ];
+
+  return [quiz, ...prompts.map((prompt, index) => ({
+    question: {
+      EN: `${prompt.EN} ${index + 1}`,
+      FR: `${prompt.FR} ${index + 1}`,
+    },
+    options: quiz.options,
+    answer: quiz.answer,
+  }))].slice(0, 8);
+}
+
+export const AGE_GROUPS: AgeGroup[] = ['0–2 years', '3–5 years', '6–9 years', '10–14 years', '15–18 years'];
 
 export const lessons: Lesson[] = [
   { id: 'bonding-babies', age: '0–2 years', icon: 'heart', title: { EN: 'Building a safe bond', FR: 'Créer un lien sécurisant' }, description: { EN: 'Simple ways to respond to your baby with warmth.', FR: 'Des façons simples de répondre à votre bébé avec chaleur.' }, narration: { EN: 'Babies learn trust through repeated, warm responses. Notice their signals, get close, and respond with a calm voice.', FR: 'Les bébés apprennent la confiance grâce à des réponses chaleureuses et répétées. Observez leurs signaux et répondez calmement.' }, details: { EN: ['Watch for early cues like eye contact, coos, or a turning away.', 'Respond quickly and gently to build a sense of safety and predictability.', 'Keep your tone warm and your touch calm so comfort becomes familiar.'], FR: ['Observez les premiers signaux comme le contact visuel, les gazouillis ou un détour du regard.', 'Répondez rapidement et doucement pour créer un sentiment de sécurité et de prévisibilité.', 'Gardez votre voix douce et votre contact calme pour que le réconfort devienne familier.'] }, duration: '4 min', quiz: { question: { EN: 'What helps a baby feel safe?', FR: 'Qu’est-ce qui aide un bébé à se sentir en sécurité ?' }, options: [{ EN: 'Warm, consistent responses', FR: 'Des réponses chaleureuses et régulières' }, { EN: 'Ignoring every cry', FR: 'Ignorer chaque pleur' }, { EN: 'Using fear', FR: 'Faire peur' }], answer: 0 } },
@@ -33,6 +69,8 @@ export const lessons: Lesson[] = [
   { id: 'gentle-morning', age: '3–5 years', icon: 'sun', title: { EN: 'Gentle mornings', FR: 'Des matins doux' }, description: { EN: 'Start the day with less stress and more connection.', FR: 'Commencer la journée avec moins de stress et plus de lien.' }, narration: { EN: 'A calm start helps children feel ready. Keep the routine simple, warm, and predictable from the moment they wake up.', FR: 'Un départ calme aide les enfants à se sentir prêts. Gardez la routine simple, douce et prévisible dès le réveil.' }, details: { EN: ['Keep wake-up time, breakfast, and dressing in a consistent order.', 'Use a warm voice and a short check-in to reduce stress before the day starts.', 'Leave enough time so there is no rush and no power struggle.'], FR: ['Gardez le réveil, le petit-déjeuner et l’habillage dans le même ordre.', 'Utilisez une voix chaleureuse et un petit moment de contact pour réduire le stress avant le début de la journée.', 'Laissez suffisamment de temps pour éviter la précipitation et les conflits.'] }, duration: '4 min', quiz: { question: { EN: 'What helps a child start the morning well?', FR: 'Qu’est-ce qui aide un enfant à bien commencer la journée ?' }, options: [{ EN: 'A calm, predictable routine', FR: 'Une routine calme et prévisible' }, { EN: 'Random shouting', FR: 'Des cris aléatoires' }, { EN: 'No routine at all', FR: 'Aucune routine du tout' }], answer: 0 } },
   { id: 'emotion-checkin', age: '6–9 years', icon: 'heart', title: { EN: 'Daily emotion check-in', FR: 'Le point sur les émotions' }, description: { EN: 'Make space for feelings before problems grow.', FR: 'Faire une place aux émotions avant que les problèmes ne s’aggravent.' }, narration: { EN: 'A quick emotional check-in can prevent small frustrations from becoming big conflicts. Ask how they feel and listen without rushing.', FR: 'Un rapide point émotionnel peut éviter que de petites frustrations deviennent de grands conflits.' }, details: { EN: ['Ask a simple question like “How are you feeling right now?”', 'Listen without immediately fixing or correcting the feeling.', 'Name the emotion and offer a next step for calm or support.'], FR: ['Posez une question simple comme « Comment te sens-tu en ce moment ? »', 'Écoutez sans corriger immédiatement ni juger l’émotion.', 'Nommez l’émotion et proposez une étape suivante pour se calmer ou obtenir de l’aide.'] }, duration: '5 min', quiz: { question: { EN: 'What is the goal of an emotion check-in?', FR: 'Quel est le but d’un point sur les émotions ?' }, options: [{ EN: 'To notice feelings before conflict grows', FR: 'Remarquer les émotions avant que le conflit ne s’aggrave' }, { EN: 'To ignore emotions', FR: 'Ignorer les émotions' }, { EN: 'To shame feelings', FR: 'Avoir honte des émotions' }], answer: 0 } },
   { id: 'family-routines', age: '10–14 years', icon: 'shield', title: { EN: 'Family routines that respect growth', FR: 'Des routines familiales respectueuses du développement' }, description: { EN: 'Create structure without taking away independence.', FR: 'Créer une structure sans enlever l’autonomie.' }, narration: { EN: 'Good routines support trust and responsibility. They should be steady, fair, and flexible enough to respect your teen’s growth.', FR: 'Les bonnes routines soutiennent la confiance et la responsabilité. Elles doivent être stables, justes et assez souples pour respecter la croissance de votre adolescent.' }, details: { EN: ['Make routines predictable but not rigid so growth still feels supported.', 'Review expectations openly and invite questions when rules feel unfair.', 'Keep room for independence while maintaining family rhythm and safety.'], FR: ['Rendez les routines prévisibles sans être trop rigides pour soutenir la croissance.', 'Revoir les attentes ouvertement et inviter les questions quand les règles semblent injustes.', 'Gardez de la place pour l’autonomie tout en maintenant le rythme et la sécurité de la famille.'] }, duration: '6 min', quiz: { question: { EN: 'A healthy family routine should be…', FR: 'Une routine familiale saine doit être…' }, options: [{ EN: 'Steady and respectful', FR: 'Stable et respectueuse' }, { EN: 'Strict without explanation', FR: 'Strict sans explication' }, { EN: 'Changing every day', FR: 'Changeant chaque jour' }], answer: 0 } },
+  { id: 'teen-autonomy', age: '15–18 years', icon: 'compass', title: { EN: 'Build trust while growing independence', FR: 'Construire la confiance en grandissant vers l’autonomie' }, description: { EN: 'Support your teen with clarity, respect, and space to decide.', FR: 'Soutenir votre adolescent avec clarté, respect et espace pour décider.' }, narration: { EN: 'At this stage, young people need both guidance and room to grow. Offer clear expectations, listen closely, and keep a respectful connection.', FR: 'À ce stade, les jeunes ont besoin à la fois de repères et d’espace pour grandir. Proposez des attentes claires, écoutez bien et gardez un lien respectueux.' }, details: { EN: ['Set clear expectations so your teen knows the standards without feeling controlled.', 'Listen to their reasoning and make room for honest conversation.', 'Keep the connection warm while supporting responsibility and healthy independence.'], FR: ['Fixez des attentes claires pour que votre adolescent sache les normes sans se sentir contrôlé.', 'Écoutez leur raisonnement et laissez place à une conversation honnête.', 'Gardez le lien chaleureux tout en soutenant la responsabilité et l’autonomie saine.'] }, duration: '6 min', quiz: { question: { EN: 'What helps a teenager grow responsibly?', FR: 'Qu’est-ce qui aide un adolescent à grandir de manière responsable ?' }, options: [{ EN: 'Clear expectations with respect', FR: 'Des attentes claires avec du respect' }, { EN: 'No boundaries', FR: 'Aucune limite' }, { EN: 'Public shaming', FR: 'La honte publique' }], answer: 0 } },
+  { id: 'teen-mental-space', age: '15–18 years', icon: 'shield', title: { EN: 'Protect space for honest conversations', FR: 'Préserver un espace pour des conversations honnêtes' }, description: { EN: 'Create room for tough conversations without pressure.', FR: 'Créer une place pour des conversations difficiles sans pression.' }, narration: { EN: 'Older teens often need time before they speak. Stay calm, keep the door open, and let them come back when they are ready.', FR: 'Les adolescents plus âgés ont souvent besoin de temps avant de parler. Restez calme, laissez la porte ouverte et attendez qu’ils soient prêts.' }, details: { EN: ['Offer a calm moment rather than forcing a conversation before they are ready.', 'Respect their pace while staying emotionally available and predictable.', 'Return to the topic later when the conversation can happen without pressure.'], FR: ['Proposez un moment calme plutôt que de forcer la conversation avant qu’ils soient prêts.', 'Respectez leur rythme tout en restant disponible et prévisible émotionnellement.', 'Reprenez le sujet plus tard, quand la conversation peut avoir lieu sans pression.'] }, duration: '5 min', quiz: { question: { EN: 'What helps conversations stay honest?', FR: 'Qu’est-ce qui aide les conversations à rester honnêtes ?' }, options: [{ EN: 'Calm, open space', FR: 'Un espace calme et ouvert' }, { EN: 'Constant pressure', FR: 'Une pression constante' }, { EN: 'Mocking', FR: 'Se moquer' }], answer: 0 } },
 ];
 
 export function lessonsForAge(age: string) {

@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 export type Language = 'EN' | 'FR';
 export type ThemePreference = 'system' | 'light' | 'dark';
 export type ChildProfile = { name: string; age: string; sex: string; educationLevel: string };
-export type ParentProfile = { name: string; imageUri: string | null; singleParent: boolean; language: Language; theme: ThemePreference };
+export type ParentProfile = { name: string; imageUri: string | null; singleParent: boolean; language: Language; theme: ThemePreference; objective?: string | null };
 
 type ParentContextValue = {
   language: Language;
@@ -14,8 +14,10 @@ type ParentContextValue = {
   childAge: string;
   theme: ThemePreference;
   parentProfile: ParentProfile | null;
+  objective: string | null;
   setTheme: (theme: ThemePreference) => void;
   saveParentProfile: (profile: ParentProfile) => void;
+  setObjective: (objective: string | null) => void;
   children: ChildProfile[];
   ppcPoints: number;
   awardProgress: (points: number) => void;
@@ -31,23 +33,26 @@ export function ParentProvider({ children: content }: { children: React.ReactNod
   const [childAge, setChildAgeState] = useState('3–5 years');
   const [theme, setThemeState] = useState<ThemePreference>('system');
   const [parentProfile, setParentProfile] = useState<ParentProfile | null>(null);
+  const [objective, setObjectiveState] = useState<string | null>(null);
   const [children, setChildren] = useState<ChildProfile[]>([]);
   const [ppcPoints, setPpcPoints] = useState(0);
 
   useEffect(() => {
-    AsyncStorage.multiGet(['parent-language', 'parent-completed', 'parent-age', 'parent-theme', 'parent-profile', 'parent-children', 'ppc-points']).then((values) => {
+    AsyncStorage.multiGet(['parent-language', 'parent-completed', 'parent-age', 'parent-theme', 'parent-profile', 'parent-objective', 'parent-children', 'ppc-points']).then((values) => {
       const storedLanguage = values[0][1];
       const storedCompleted = values[1][1];
       const storedAge = values[2][1];
       const storedTheme = values[3][1];
       const storedProfile = values[4][1];
+      const storedObjective = values[5][1];
       if (storedLanguage === 'EN' || storedLanguage === 'FR') setLanguageState(storedLanguage);
       if (storedCompleted) setCompleted(JSON.parse(storedCompleted) as string[]);
       if (storedAge) setChildAgeState(storedAge);
       if (storedTheme === 'system' || storedTheme === 'light' || storedTheme === 'dark') setThemeState(storedTheme);
       if (storedProfile) setParentProfile(JSON.parse(storedProfile) as ParentProfile);
-      if (values[5][1]) setChildren(JSON.parse(values[5][1]) as ChildProfile[]);
-      if (values[6][1]) setPpcPoints(Number(values[6][1]) || 0);
+      if (storedObjective) setObjectiveState(storedObjective);
+      if (values[6][1]) setChildren(JSON.parse(values[6][1]) as ChildProfile[]);
+      if (values[7][1]) setPpcPoints(Number(values[7][1]) || 0);
     });
   }, []);
 
@@ -60,12 +65,14 @@ export function ParentProvider({ children: content }: { children: React.ReactNod
     completed,
     theme,
     parentProfile,
+    objective,
     children,
     ppcPoints,
     awardProgress: (points: number) => { setPpcPoints((current) => { const next = current + points; void AsyncStorage.setItem('ppc-points', String(next)); return next; }); },
     saveChildren: (next: ChildProfile[]) => { setChildren(next); void AsyncStorage.setItem('parent-children', JSON.stringify(next)); },
     setTheme: (next: ThemePreference) => { setThemeState(next); void AsyncStorage.setItem('parent-theme', next); },
     saveParentProfile: (profile: ParentProfile) => { setParentProfile(profile); void AsyncStorage.setItem('parent-profile', JSON.stringify(profile)); },
+    setObjective: (next: string | null) => { setObjectiveState(next); if (next === null) { void AsyncStorage.removeItem('parent-objective'); return; } void AsyncStorage.setItem('parent-objective', next); },
     toggleCompleted: (id: string) => {
       setCompleted((current) => {
         const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
@@ -79,7 +86,7 @@ export function ParentProvider({ children: content }: { children: React.ReactNod
       setChildAgeState(age);
       void AsyncStorage.setItem('parent-age', age);
     },
-  }), [language, completed, childAge, theme, parentProfile, children, ppcPoints]);
+  }), [language, completed, childAge, theme, parentProfile, objective, children, ppcPoints]);
 
   return <ParentContext.Provider value={value}>{content}</ParentContext.Provider>;
 }

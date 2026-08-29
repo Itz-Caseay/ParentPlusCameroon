@@ -11,10 +11,10 @@ import type { Href } from "expo-router";
 export default function ProfileScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { language, setLanguage, childAge, setChildAge } = useParent();
+  const { language, setLanguage, childAge, setChildAge, children } = useParent();
   const { signOut } = useClerk();
   const { user } = useUser();
-  const ages = ["0–2 years", "3–5 years", "6–9 years", "10–14 years"];
+  const ages = ["0–2 years", "3–5 years", "6–9 years", "10–14 years", "15–18 years"];
   return (
     <ScrollView
       style={{ backgroundColor: colors.background }}
@@ -40,6 +40,57 @@ export default function ProfileScreen() {
             Cameroon · pilot participant
           </Text>
         </View>
+      </View>
+      <Text style={[styles.section, { color: colors.foreground }]}>
+        Your children
+      </Text>
+      <View
+        style={[
+          styles.childrenWrap,
+          { backgroundColor: colors.card, borderColor: colors.border },
+        ]}
+      >
+        {children.length ? (
+          children.map((child, index) => (
+            <View
+              key={`${child.name}-${index}`}
+              style={[
+                styles.childRow,
+                {
+                  borderBottomColor:
+                    index === children.length - 1 ? 'transparent' : colors.border,
+                },
+              ]}
+            >
+              <View style={[styles.childBadge, { backgroundColor: colors.secondary }]}>
+                <Feather name="user" size={16} color={colors.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.childName, { color: colors.foreground }]}>
+                  {child.name}
+                </Text>
+                <Text style={[styles.childMeta, { color: colors.mutedForeground }]}>
+                  {child.age} · {child.sex}
+                </Text>
+              </View>
+              <Text
+                style={[
+                  styles.childAgePill,
+                  {
+                    backgroundColor: colors.accent,
+                    color: colors.accentForeground,
+                  },
+                ]}
+              >
+                {child.educationLevel}
+              </Text>
+            </View>
+          ))
+        ) : (
+          <Text style={[styles.emptyChildren, { color: colors.mutedForeground }]}>
+            No children added yet.
+          </Text>
+        )}
       </View>
       <Text style={[styles.section, { color: colors.foreground }]}>
         Language / Langue
@@ -182,6 +233,49 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   languageText: { fontFamily: "Inter_600SemiBold", fontSize: 13 },
+  childrenWrap: {
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginBottom: 12,
+  },
+  childRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  childBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  childName: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 14,
+    marginBottom: 3,
+  },
+  childMeta: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 12,
+  },
+  childAgePill: {
+    overflow: "hidden",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 10,
+  },
+  emptyChildren: {
+    fontFamily: "Inter_500Medium",
+    fontSize: 13,
+    paddingVertical: 12,
+  },
   option: {
     borderWidth: 1,
     borderRadius: 14,

@@ -14,7 +14,7 @@ import * as Speech from "expo-speech";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { useParent } from "@/context/ParentContext";
-import { lessons } from "@/constants/lessons";
+import { lessons, normalizeQuizQuestions } from "@/constants/lessons";
 
 export default function LessonPlayerScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -28,10 +28,17 @@ export default function LessonPlayerScreen() {
   );
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [quizOpen, setQuizOpen] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(true);
+  const [quizIndex, setQuizIndex] = useState(0);
   const [choice, setChoice] = useState<number | null>(null);
   const [score, setScore] = useState<number | null>(null);
+  const [results, setResults] = useState<boolean[]>([]);
   const hand = useRef(new Animated.Value(0)).current;
+  const quizQuestions = useMemo(
+    () => normalizeQuizQuestions(lesson.quiz),
+    [lesson.quiz],
+  );
+  const currentQuestion = quizQuestions[quizIndex] ?? quizQuestions[0];
   useEffect(() => {
     if (!playing) return;
     const loop = Animated.loop(
@@ -89,9 +96,26 @@ export default function LessonPlayerScreen() {
   };
   const submitQuiz = () => {
     if (choice === null) return;
-    const result = choice === lesson.quiz.answer ? 1 : 0;
-    setScore(result);
-    if (result) toggleCompleted(lesson.id);
+    const result = choice === currentQuestion.answer ? 1 : 0;
+    const nextResults = [...results, result === 1];
+    setResults(nextResults);
+
+    if (quizIndex >= quizQuestions.length - 1) {
+      const passed = nextResults.filter(Boolean).length >= 6;
+      setScore(passed ? 1 : 0);
+      if (passed) toggleCompleted(lesson.id);
+      return;
+    }
+
+    setQuizIndex((current) => current + 1);
+    setChoice(null);
+  };
+
+  const resetQuiz = () => {
+    setQuizIndex(0);
+    setChoice(null);
+    setResults([]);
+    setScore(null);
   };
   return (
     <ScrollView
@@ -253,11 +277,11 @@ export default function LessonPlayerScreen() {
             </Text>
           </View>
           <Text style={[styles.question, { color: colors.foreground }]}>
-            {lesson.quiz.question[language]}
+            {`${quizIndex + 1} / ${quizQuestions.length} · ${currentQuestion.question[language]}`}
           </Text>
-          {lesson.quiz.options.map((option, index) => (
+          {currentQuestion.options.map((option, index) => (
             <Pressable
-              key={option.EN}
+              key={`${currentQuestion.question.EN}-${option.EN}-${index}`}
               onPress={() => setChoice(index)}
               style={[
                 styles.option,
@@ -290,7 +314,9 @@ export default function LessonPlayerScreen() {
                 },
               ]}
             >
-              <Text style={styles.submitText}>Check answer</Text>
+              <Text style={styles.submitText}>
+                {quizIndex >= quizQuestions.length - 1 ? 'Finish quiz' : 'Next question'}
+              </Text>
             </Pressable>
           ) : (
             <View
@@ -306,16 +332,11 @@ export default function LessonPlayerScreen() {
               />
               <Text style={[styles.resultText, { color: colors.foreground }]}>
                 {score
-                  ? "Well done — lesson completed."
+                  ? `Well done — ${results.filter(Boolean).length} of ${quizQuestions.length} answers were correct.`
                   : "Not quite. Try again and listen for the key idea."}
               </Text>
               {!score && (
-                <Pressable
-                  onPress={() => {
-                    setScore(null);
-                    setChoice(null);
-                  }}
-                >
+                <Pressable onPress={resetQuiz}>
                   <Text style={[styles.tryAgain, { color: colors.primary }]}>
                     Try again
                   </Text>
