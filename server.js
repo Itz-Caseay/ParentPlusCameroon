@@ -3,15 +3,16 @@ const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const apiRouter = express.Router();
 
 app.use(express.json());
 app.use(express.static(__dirname));
 
-app.get("/api/health", (req, res) => {
+apiRouter.get("/health", (req, res) => {
   res.json({ ok: true, service: "Parent+ Cameroon API", version: "1.0.0" });
 });
 
-app.get("/api/modules", (req, res) => {
+apiRouter.get("/modules", (req, res) => {
   res.json([
     { id: 1, title: "Understanding Your Child's Emotions", category: "Emotional support" },
     { id: 2, title: "Positive Communication at Home", category: "Communication" },
@@ -19,11 +20,25 @@ app.get("/api/modules", (req, res) => {
   ]);
 });
 
-app.post("/api/feedback", (req, res) => {
+apiRouter.post("/feedback", (req, res) => {
   // Prototype only: replace with database persistence during MVP implementation.
   res.status(201).json({ message: "Feedback received", data: req.body });
 });
 
-app.listen(PORT, () => {
-  console.log(`Parent+ Cameroon running at http://localhost:${PORT}`);
+app.use("/api", apiRouter);
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
+
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Parent+ Cameroon running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
