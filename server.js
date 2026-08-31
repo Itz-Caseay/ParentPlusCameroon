@@ -4,9 +4,10 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const apiRouter = express.Router();
+const projectRoot = __dirname.endsWith("/api") ? path.resolve(__dirname, "..") : __dirname;
 
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(projectRoot));
 
 apiRouter.get("/health", (req, res) => {
   res.json({ ok: true, service: "Parent+ Cameroon API", version: "1.0.0" });
@@ -28,11 +29,11 @@ apiRouter.post("/feedback", (req, res) => {
 app.use("/api", apiRouter);
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(projectRoot, "index.html"));
 });
 
 app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(projectRoot, "index.html"));
 });
 
 if (require.main === module) {
